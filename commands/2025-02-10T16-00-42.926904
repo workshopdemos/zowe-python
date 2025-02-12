@@ -1,0 +1,3 @@
+Command: ['zowe', 'endevor', 'list', 'pacages', '--rft', 'string', '--sm']
+Data:
+CompletedProcess(args=['zowe', 'endevor', 'list', 'pacages', '--rft', 'string', '--sm'], returncode=1, stdout='', stderr='Command Error:\nUnknown arguments: rft, sm, pacages\nCommand failed due to improper syntax\nDid you mean: endevor list packages?\n\nCommand entered: "endevor list pacages --rft string --sm"\nAvailable commands are "defaults, features, type-sequence, dialog, symbols, instances, code-page-config, environments, stages, systems, subsystems, types, processor-groups, processor-symbols, packages, elements, tasks".\nUse "zowe endevor list --help" to view groups, commands, and options.\nError Details:\nUnknown arguments: rft, sm, pacages\n')
