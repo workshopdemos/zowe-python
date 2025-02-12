@@ -1,3 +1,0 @@
-Command: ['zowe', 'endevor', 'list', 'types', '--rft', 'string', '--sm']
-Data:
-CompletedProcess(args=['zowe', 'endevor', 'list', 'types', '--rft', 'string', '--sm'], returncode=0, stdout='[{"typeName":"COBOL","envName":"DEV","stgNum":"1","sysName":"MARBLES"}]\n', stderr='')
