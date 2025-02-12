@@ -11,7 +11,7 @@ A big advantage of Python over Rexx is library support.  In Rexx, you can find s
 Using libraries in Python, we can integrate with a variety of systems and applications with little code.
 
 ## What is Python
-Python is a versatile and powerful scripting language known for its simplicity and readability. Here's an organized summary of the key aspects:
+Python is a versatile and powerful scripting language known for its simplicity and readability. Here's a summary of the key aspects:
 
 **Scripting Nature**: Python is interpreted, meaning it executes code line by line without prior compilation, making it ideal for rapid development and experimentation.
 
@@ -33,15 +33,15 @@ In summary, Python is a powerful yet approachable scripting language with strong
 
 ## Python conventions
 There are some things to know about writing Python.  For our purposes, we want to keep in mind a couple of things:
-1. Python tracks code blocks using spaces or tabs.  To be consistent, use one or the other but not both.  This workshop uses tabs.
-2. Functions are defined as `def functionName():` All the commands in the function must be indented under the def block.
+1. Python tracks code blocks using spaces or tabs.  To be consistent, use one or the other but not both.  This workshop uses tabs.  If you have different indentation levels, you will get errors during the execution.
+2. Functions are defined as `def functionName(parameters):` All the commands in the function must be indented under the def block.
 3. In this example, we are using very basic error checking.  There are more advanced methods not covered here.
-4. Python can be run as a script (as we are here) or interactively (great for testing/debugging)
+4. Python can be run as a script (as we are here) or interactively (great for testing/debugging).
 
 ## Our First Challenge
 We want to create a script to export information from Endevor.  This could be a list of elements, systems, packages, etc.  
 
-We want to export this information into Microsoft Excel.  This is a binary document that has to be in a specific format for Excel to read it.  There are various methods to get the data into Excel, including exporting screen captures, writing some Rexx to get the data into CSV or using the CSV Utility and transferring it to our desktop.  
+We want to export this information into Microsoft Excel.  This is a binary document that has to be in a specific format for Excel to read it.  There are various methods to get the data into Excel, including exporting screen captures, writing some Rexx to get the data into CSV or using Endevor's CSV Utility and transferring it to our desktop.  
 
 When we decide on automating an action, we must look at ways to perform the action.  Let's assume we want to:
 1. Run this off host
@@ -50,7 +50,7 @@ When we decide on automating an action, we must look at ways to perform the acti
 4. Use the Endevor REST API
 
 ## Run Off Host
-We want to may want to use automation, perhaps a scheduler, to get the information regularly.  We may also want to perform actions with the data, such as generating a chart.  It might be difficult to perform that on the mainframe using Rexx, so using it off host may make sense.
+We may want to use automation, perhaps a scheduler, to get the information regularly.  We may also want to perform actions with the data, such as generating a chart.  It might be difficult to perform that on the mainframe using Rexx, so using it off host may make sense.
 
 ## Flexibility
 The operation should allow us to work with multiple Endevor objects.  Perhaps we want to export information regarding elements but later want to export processor groups.  Thinking ahead gives us the ability to perform those actions with minimal effort.
@@ -58,16 +58,17 @@ The operation should allow us to work with multiple Endevor objects.  Perhaps we
 ## Output
 There can be a ton of ways to look at information.  On and off the mainframe, there are various reporting engines.  Business Analysts love Excel.  So, let's assume we want to use Excel and CSV as output formats.  
 
-These aren't the only formats available.  If we wanted to time sensitive values, we might export the data to a database.
+These aren't the only formats available.  If we wanted use to time series values, we might export the data to a database so it could be manipulated in different ways.
 
 ## Using Endevor REST API
 Endevor offers multiple ways to get data out of it.  JCL and CSVs are common ways to get data out.  Endevor also offers a [REST based API](https://aws.amazon.com/what-is/restful-api/).
 
-The API can be accessed directly, much like a web browser communicates with a web server.  This offers a lot of flexibility, but we can also use the Zowe CLI to perform the action for us.  The Zowe CLI uses a configuration file to manage connection and profile information.  It also provides a nice structure for interacting with Endevor.
+The [Endevor REST API](https://techdocs.broadcom.com/us/en/ca-mainframe-software/devops/ca-endevor-software-change-manager/19-0/using/using-the-rest-api.html) can be accessed directly, much like a web browser communicates with a web server.  This offers a lot of flexibility, but we can also use the Zowe CLI to perform the action for us.  The Zowe CLI (command line interface) uses a configuration file to manage connection and profile information.  It also provides a nice structure for interacting with Endevor.
 
 The Zowe CLI does have some limitations.  It wasn't designed to export Excel documents, for example.  
 
-Let's take our first run at getting data from Endevor:
+Let's take our first run at getting data from Endevor.  Let's use the terminal.  It can be accessed using the hamburger menu (three horizontal lines), Terminal, New Terminal:
+
 `zowe endevor list packages`
 
 This command give a tabluar view of output:
@@ -86,13 +87,13 @@ BATTIVA1         battiva1                                      EXECUTED   2024-0
 BK001            Demo Package                                  INEDIT     2021-09-21T16:35:56.16+0000 CUST001  
 BRBD4TPACKAGT001 Deployed to DEP4TEST by BERBE02 @ 9 Sep 2019  EXECFAILED 2019-09-09T12:55:01.69+0000 BERBE02
 
-While a table like this can be handy, the format is somewhat limited.  It might be great for viewing information but it does have limits.  If we want to import it into Excel, we have to identify columns.  And that's usually interactive.  That's not good for automation.  And what if we change the columns?  That automation might break.  And the more columns, the longer the output.  
+A table like this might be great for viewing information but it does have limits.  If we want to import it into Excel, we have to identify columns.  And that's usually interactive.  That's not good for automation.  And what if we change the columns?  That automation might break.  And the more columns, the longer the output.  
 
 Try running the previous command with `--full-output` and see how much information is returned.
 
 Is there a way to export into CSV format from Zowe CLI's Endevor Plugin?
 
-Check the documentation by running:
+Check the documentation by running in terminal:
 
 `zowe endevor list packages --help`
 
@@ -103,6 +104,9 @@ If you see the section, "Response Format Options", you'll notice there's three o
     LIST provides the information in a series of JSON objects. 
     OBJECT lists the values, but they are a single object:value pair per line.  
     STRING lists the data in a large array in a JSON string.
+3. Response Format Header (--rfh) is a boolean value that just determines if the headers are printed.  
+
+None of the options allow for easy CSV export, so we need to find a different way. 
 
 Run the commands to see the outputs and compare them:
 
@@ -129,8 +133,9 @@ Command line applications can run as single command, or they can take options to
 
 Our first goal is to execute the command then make it flexible.  
 
-Create a new file, call it `first.py`.
-Copy the text to the top of the file:
+Create a new file, call it `first.py`.  You can create the file through the file option or using the terminal and typing `code first.py`.
+
+Copy this text into file:
 
 ```
 from zowesupport import *
@@ -142,7 +147,7 @@ print(data)
 
 This is a simple application to introduce a couple of concepts.
 
-The first line imports the zowesupport library. This library wraps performs a couple of functions.  It allows execution of commands and submits jobs and writes the output.
+The first line imports the zowesupport library. This library wraps functions for calling command line utilities and running mainframe jobs. It also stores the output from the commands.
 
 `command = "zowe..."` assigns the command we want to run to the variable command.
 
@@ -150,7 +155,7 @@ The first line imports the zowesupport library. This library wraps performs a co
 
 `print(data)` does exactly that, it prints the data on the command line. 
 
-If you did this correctly, you should get a set of output.
+If you did this correctly, you should get the same output as running the zowe command directly.
 
 Now that you've seen what it takes to get the output, let's look at the main application so we can modify it for our job, exporting the data into Excel.
 
@@ -200,11 +205,11 @@ Add the following line to the end of your script:
 
 `pandas.DataFrame(data).to_excel("packages.xlsx")`
 
-What does this command do?  
+*What does this command do?*
 
 [Pandas](https://pypi.org/project/pandas/) is a data manipulation library.  If you look at the documentation, you'll see one of the major modules is called a [DataFrame](https://pandas.pydata.org/docs/reference/frame.html).  The data frame is used to house the information and work with it.
 
-`pandas.DataFrame(data)` uses the pandas Library and creates a DataFrame using the data from the output of our Zowe command. We can then call a function of the data frame to export to Excel (the .to_excel function).  We pass in a filename and it will write that to an Excel spreadsheet.
+`pandas.DataFrame(data)` uses the pandas Library and creates a DataFrame using the data from the JSON output of our Zowe command. We can then call a function of the data frame to export to Excel (the *.to_excel()* function).  We pass in a filename and it will write that to an Excel spreadsheet.
 
 Note:  This is a shortcut method.  We could have written the code to look like:
 
@@ -221,20 +226,22 @@ Once you make this change, save and execute the python program:
 
 It should not really display any information, however, it will write out a file called "packages.xlsx" in your current directory.
 
-TODO: See if we can load the xlsx viewer
+The file should be seen in the File Explorer or you can list is using the `ls -l` command in the terminal window.
 
 ### Flexibility is good
 Let's make the script more flexible.  We want the user to select any available object for listing, including elements, systems, subsystems, etc.  And what if they need it in CSV instead of Excel?  Let's also allow the user to specify the name of the file.
 
 Using the ArgParse library will allow us to do that.
 
-[ArgParse](https://docs.python.org/3/library/argparse.html) is another library for working with command line arguments. Instead of managing them manually, we can use a library and set up some simple rules.  
+[ArgParse](https://docs.python.org/3/library/argparse.html) is another library.  This one works with command line arguments. Instead of managing them manually, we can use a library and set up some simple rules.  
+
+There's a section of code (lines 13-19).  It is commented out (# in first column).  Remove the comments.  You can highlight the commands and press CTRL-/ (windows) or Command-/ (mac) and it will remove the comment block for you.
 
 `parser = argparse.ArgumentParser()`
 
 This creates a parser object called parser.  We can add arguments, determine values for them, make the required, etc.  
 
-You will find a section of add_arguments commands.  These add arguments to the command, as well as help and various options.  Uncomment these lines.
+You will find a section of add_arguments commands.  These add arguments to the command, as well as help and various options. 
 
 You'll notice that we have options for object, output directory, max return code, type and filename.
     Object is the item we want to query.  Let's require that.
@@ -243,7 +250,7 @@ You'll notice that we have options for object, output directory, max return code
     Type is used to determine if the output will be CSV or Excel
     Filename is used to set the filename for the CSV/Excel file.
 
-    Review the other argument for each .add_arguement command.  You'll see you can make them required or optional, display help and even assign the value to a variable.
+    Review the other argument for each .add_argument command.  You'll see you can make them required or optional, display help and even assign the value to a variable.
 
 `parse_args()` will parse the arguements during the command line execution, making them available.
 
