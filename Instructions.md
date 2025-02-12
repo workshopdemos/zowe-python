@@ -1,7 +1,7 @@
 # Introduction
 During this exercise, you will work with Python to automate a number of actions using [Zowe CLI](https://zowe.org).
 
-## Getting Started
+# Getting Started
 Zowe CLI is a command line interface.  It is often used for automation, much like a Rexx would be used on the mainframe.
 
 Rexx is very powerful.  And so is Python.  Rexx can automate many actions on the mainframe but has also been ported to other platforms.  Python can be used to automate things on the mainframe and distributed environments.
@@ -38,7 +38,8 @@ There are some things to know about writing Python.  For our purposes, we want t
 3. In this example, we are using very basic error checking.  There are more advanced methods not covered here.
 4. Python can be run as a script (as we are here) or interactively (great for testing/debugging).
 
-## Our First Challenge
+----
+# Our First Challenge
 We want to create a script to export information from Endevor.  This could be a list of elements, systems, packages, etc.  
 
 We want to export this information into Microsoft Excel.  This is a binary document that has to be in a specific format for Excel to read it.  There are various methods to get the data into Excel, including exporting screen captures, writing some Rexx to get the data into CSV or using Endevor's CSV Utility and transferring it to our desktop.  
@@ -335,6 +336,7 @@ And it will provide a full description of the application and options, all from 
 Python is a scripting language.  If you've ever used BATCH on DOS/Windows, you know you can execute it directly.  On Linux/USS, you can do the same with other scripting languages, but it takes two steps to do it.  
 
 **First Part**
+
 We have to add a new line to the script to call the interpreter.  Second, we need to change permissions of the file so it can be executed.
 
 The first line of a script can have a [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) directive to indicate which engine to run.  We can run Bourne Shells, Python, Javascript, Perl, etc.  The first line identifies which one to use.  
@@ -358,6 +360,7 @@ This should be above the `from zowesupport import *` line.
 We've now told our operating system what to do, but if we run it, it will still fail.
 
 **Second Part**
+
 The script, as created has Read/Write privileges for the current user, and read for everyone else.  We need to set the execution bit.  We can do that using the `chmod` command.  
 
 To set the execution bit, we run:
@@ -380,6 +383,8 @@ If you've run this to create an Excel file, we need to view it.  If you have Exc
 
 If you don't have Excel, you can use a viewer in VS Code.  Go to the extensions, search for Excel.  Install the Excel Viewer by GrapeCity.  You may get a licensing message, but it will show the file in a spreadsheet mode.
 
+----
+
 ### Challenge Mode
 Here's a simple challenge.  
 
@@ -391,6 +396,8 @@ Modify this line so it has a default object instead of forcing the user to type 
 Using libraries, like `zowesupport` and `pandas`, we've written an application to export multiple object types in Endevor.  It can write them as CSV or Excel files.  You can also name the files and determine the output directory.
 
 And you did that in roughly 30 lines of code.  
+
+----
 
 # Bonus Activity
 In the previous activity, we used Zowe's Endevor plugin to access data.  
@@ -496,10 +503,14 @@ print(f"Wrote PDF to {filename}")
 
 We took 22 lines of code to run a job, download the output and then save it to a PDF.
 
+# Conclusion
+
+You've seen how using Python libraries can enhance output from the mainframe.  There are tons of ways to continue to enhance your work and output.
+
 Python offers all sorts of libaries, making it convenient to work with multiple solutions.  
 
-This can be just the beginning.  Python is now available on USS using to Z Open Automation Utilities (ZOAU), making it even more useful.  ZOAU has libraries to support accessing datasets, jobs, etc., directly while running on the mainframe itself.
+This can be just the beginning.  Python is now available on USS using to Z Open Automation Utilities (ZOAU), making it even more useful.  ZOAU has libraries to support accessing datasets, jobs, etc., directly while running on the mainframe itself.  And while not all libraries are currently supported on USS, many are.
 
+----
 
-
-
+# Thank you!
