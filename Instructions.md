@@ -4,7 +4,7 @@ During this exercise, you will work with Python to automate a number of actions 
 ## Getting Started
 Zowe CLI is a command line interface.  It is often used for automation, much like a Rexx would be used on the mainframe.
 
-Rexx is very powerful.  And so is Python.  Rexx can automate many actions on the mainframe.  Python can be used to automate things on the mainframe and distributed environments.
+Rexx is very powerful.  And so is Python.  Rexx can automate many actions on the mainframe but has also been ported to other platforms.  Python can be used to automate things on the mainframe and distributed environments.
 
 A big advantage of Python over Rexx is library support.  In Rexx, you can find scripts to perform many actions, however, interacting with off host applications might require a lot more work.  
 
