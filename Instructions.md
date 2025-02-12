@@ -250,7 +250,7 @@ You'll notice that we have options for object, output directory, max return code
     Type is used to determine if the output will be CSV or Excel
     Filename is used to set the filename for the CSV/Excel file.
 
-    Review the other argument for each .add_argument command.  You'll see you can make them required or optional, display help and even assign the value to a variable.
+    Review the other arguments for each *.add_argument()* command.  You'll see you can make them required or optional, display help and even assign the value to a variable.
 
 `parse_args()` will parse the arguements during the command line execution, making them available.
 
@@ -267,7 +267,11 @@ Find your `command = "zowe ..."` string and change it to:
 Place an "f" in front of a string turns it to an "F-Mode string".  This allows us to interpolate variables into the string.  It will substitue the string values, making it easier to read.  If we didn't use them, the string would look more complicated, like a Rexx string.  It would look like:
 `command = "zowe endevor list " + args.object + " --rft string --sm"`
 
-F-Mode strings allow us to simplify this.  Using a Python editor, it will even highlight the variable different in the string.
+F-Mode strings simplify this.  Using a Python editor, it will even highlight the variable different in the string.
+
+Now, let's adjust the `data = simpleCommand(command, "command")` so that we can pass a user selectable directory. To to that change the code to:
+
+`data = simpleCommand(command, args.directory)`
 
 Now, let's adjust the code so it will write the appropriate file type out, based upon the --type flag.  This new block of code tests the args.type variable to see if it is Excel or CSV and writes the appropriate file extension.
 
@@ -294,7 +298,7 @@ However, we aren't done yet.  If you have a typo for the object name, the comman
 
 Let's make this a little more user friendly.  If the user has a typo, let's correct them before we even execute the command.
 
-You'll notice there's a line `choices = ["codepages", "defaults"...]`.  This is called a Python dictionary.  ArgParser can validate the values for the argument.  Rather than put them inline, making the code harder to read, we created a dictionary called choices with a list of valid choices.  
+You'll notice there's a line `choices = ["codepages", "defaults"...]`.  This is called a Python dictionary.  ArgParser can validate the values for arguments using dictionaries.  Rather than put them inline, making the code harder to read, we created a dictionary called choices with a list of valid choices.  
 
 If you look at the type arguement line, you will see it listed there:
 `parser.add_argument("-t", "--type", choices=["excel", "csv"], help="Excel or CSV", default="excel")`
@@ -325,25 +329,25 @@ Note, argparse also create a help system.  You can run
 
 `python workshop.py -h`
 
-And it will provide a nice help, all from the ArgParse library.
+And it will provide a full description of the application and options, all from the ArgParse library.
 
 ### Let's make it easier to execute.
-Python is a scripting language.  If you've ever use BATCH on DOS/Windows, you know you can execute it directly.  On Linux/USS, you can do the same with other scripting languages, but it takes two steps to do it.  
+Python is a scripting language.  If you've ever used BATCH on DOS/Windows, you know you can execute it directly.  On Linux/USS, you can do the same with other scripting languages, but it takes two steps to do it.  
 
 **First Part**
 We have to add a new line to the script to call the interpreter.  Second, we need to change permissions of the file so it can be executed.
 
-The first line of a script can have a [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) directive to indicate which engine to run.  We can run Bourne Shells, Python, Javascript, Perl, etc.  So the first line says, which one to use.  
+The first line of a script can have a [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) directive to indicate which engine to run.  We can run Bourne Shells, Python, Javascript, Perl, etc.  The first line identifies which one to use.  
 
 We can also have multiple versions of the same scripting engine installed (such as Python 2.7 vs 3.0 vs 3.11).  We need to specify which one to use.  How do we find it?
 
-On most Unix/Linux distributions, there's a utility called `which`.   Others use `type`.  Either command should return the location where an application is installed and running from.  It must be within the PATH environment variable. 
+On most Unix/Linux distributions, there's a utility called `which`.   Others use `type`.  Either command should return the location where an application is installed and running from.  It must be within the PATH environment variable.  If it is not in the PATH, it will not be found. 
 
 Run:
 
 `which python`
 
-It should show `/usr/bin/python`.  Thi is the location of Python for this machine.
+It should show `/usr/bin/python`.  This is the location of Python for this machine.
 
 We are going to add the shebang to the top of the file, like this:
 
@@ -354,7 +358,7 @@ This should be above the `from zowesupport import *` line.
 We've now told our operating system what to do, but if we run it, it will still fail.
 
 **Second Part**
-The script, as created has Read/Write privileges for the current user, and read for everyone else.  We need to set the execution bit.  We can do that using the chmod command.  
+The script, as created has Read/Write privileges for the current user, and read for everyone else.  We need to set the execution bit.  We can do that using the `chmod` command.  
 
 To set the execution bit, we run:
 
@@ -372,11 +376,11 @@ To execute our application now, we can simply type:
 You will see the basic help show up on the screen.
 
 ### Seeing the results
-If you've run this to create an Excel file, we need to view it.  If you have Excel on your local system, use the file Navigator to right click on the file and select download.  You can download and use the file with Excel.
+If you've run this to create an Excel file, we need to view it.  If you have Excel on your local system, use the file explorer to right click on the file and select download.  You can download and use the file with Excel.
 
 If you don't have Excel, you can use a viewer in VS Code.  Go to the extensions, search for Excel.  Install the Excel Viewer by GrapeCity.  You may get a licensing message, but it will show the file in a spreadsheet mode.
 
-### Challenge
+### Challenge Mode
 Here's a simple challenge.  
 
 Modify this line so it has a default object instead of forcing the user to type a name:
@@ -493,6 +497,8 @@ print(f"Wrote PDF to {filename}")
 We took 22 lines of code to run a job, download the output and then save it to a PDF.
 
 Python offers all sorts of libaries, making it convenient to work with multiple solutions.  
+
+This can be just the beginning.  Python is now available on USS using to Z Open Automation Utilities (ZOAU), making it even more useful.  ZOAU has libraries to support accessing datasets, jobs, etc., directly while running on the mainframe itself.
 
 
 
