@@ -6,6 +6,9 @@ from dotmap import DotMap
 import shlex
 from shutil import which
 
+
+ZOWE_CMD = which("zowe")
+
 # Read config file, use dot (.) notation for accessing elements
 configFile = Path("./config.json")
 if configFile.exists():
@@ -51,10 +54,7 @@ def submitJobAndDownloadOutput(dataset, dir, file, maxRC=0):
     content = f"Command: {command}\n"
     content += "Data:\n"
     output = subprocess.run(command, capture_output=True, text=True)
-    print(output.stdout)
     data = DotMap(json.loads(output.stdout, strict=False))
-    print(data.data.owner, data.data.jobid, data.data.jobname, data.data.retcode)
-
 
     content += f"{output}"
     writeToFile(dir, content)

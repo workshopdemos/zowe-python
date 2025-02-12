@@ -1,9 +1,8 @@
-#!/Users/tm633717/source/workshop/venv/bin/python
+#!/usr/bin/python
 from zowesupport import *
 import json
 import pandas
 import argparse
-
 
 # Argument Parsing
 # Limits choices to valid Endevor List options
@@ -19,7 +18,6 @@ parser.add_argument("-m", "--maxrc", help="Max return code for jobs", default=0,
 parser.add_argument("-t", "--type", choices=["excel", "csv"], help="Excel or CSV", default="excel")
 parser.add_argument("-f", "--filename", help="Output of filename", default="out", dest="filename")
 args = parser.parse_args()
-
 
 # Execution
 command = f"zowe endevor list {args.object} --rft string --sm"
