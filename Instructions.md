@@ -120,10 +120,10 @@ Run the commands to see the outputs and compare them:
 `zowe endevor list packages --rft string`
 
 Out of the all options, it looks like `--rft string` is the closest to capturing column and row information.  However, if you run this, you'll notice messages at the top of the output.  Let's remove those using the suppress messages flag, `--sm`.
-
+]\
 Run:
 
-`zowe files list packages --rft string --sm`
+`zowe endevor list packages --rft string --sm`
 
 And check the output, it should be just data, no header or other information.
 
@@ -391,6 +391,15 @@ Here's a simple challenge.
 Modify this line so it has a default object instead of forcing the user to type a name:
 
 `parser.add_argument("-o", "--object", help="Object to list", required=True, choices=choices, dest='object')`
+
+### Challenge Mode 2
+Modify the command to show all the output for packages.  You may want to review the command:
+
+`zowe endevor list packages --help`
+
+There's an option for output, to get it all.  Add that to the command line (at the end is perfectly fine).  
+
+Review the resulting Excel file.
 
 ## Workshop Wrap up
 Using libraries, like `zowesupport` and `pandas`, we've written an application to export multiple object types in Endevor.  It can write them as CSV or Excel files.  You can also name the files and determine the output directory.

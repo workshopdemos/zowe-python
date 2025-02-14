@@ -22,23 +22,24 @@ the values identified."""
 def simpleCommand(command, dir, expectedOutputs=None):
     # output = ""
     command = shlex.split(command)
+    output = subprocess.run(command, capture_output=True, text=True)
+    
     content = f"Command: {command}\n"
     content += "Data:\n"
-    output = subprocess.run(command, capture_output=True, text=True)
     content += f"{output}"
+    
     writeToFile(dir, content)
     
     if not expectedOutputs is None:
         if not verifyOutput(content, expectedOutputs):
-            exit(8)
+            raise ValueError("Value not found ", expectedOutputs)
     
     return output.stdout
 
 def verifyOutput(data, expectedOutputs):
     for value in expectedOutputs:
         if value not in data:
-            print(f"Error finding {value} in {data}")
-            return False
+            raise ValueError("Value not found ", value)
     return True
 
 def submitandrety(dataset, dir, maxRC=0, numRetries=1):
@@ -46,15 +47,19 @@ def submitandrety(dataset, dir, maxRC=0, numRetries=1):
         submitJobAndDownloadOutput(dataset, dir, maxRC)
         numRetries = numRetries - 1
     else:
-        print ("Max retries exceeded")
-        exit(88)
+        raise ("Max retries exceeded")
 
-def submitJobAndDownloadOutput(dataset, dir, file, maxRC=0):
+def submitJobAndDownloadOutput(dataset, dir, maxRC=0):
     command = shlex.split(f'zowe jobs submit data-set "{dataset}" --wfo --rfj')
     content = f"Command: {command}\n"
     content += "Data:\n"
     output = subprocess.run(command, capture_output=True, text=True)
-    data = DotMap(json.loads(output.stdout, strict=False))
+    if output.returncode > 0:
+        raise ValueError("Return Code not valid", output)
+    try:
+        data = DotMap(json.loads(output.stdout, strict=False))
+    except Exception as e:
+        raise ValueError("Output is not JSON, did you use --rfj?")
 
     content += f"{output}"
     writeToFile(dir, content)
@@ -68,6 +73,8 @@ def submitJobAndDownloadOutput(dataset, dir, file, maxRC=0):
 def downloadSpoolFile(jobId, spoolFile):
     command = shlex.split(f'zowe jobs view sfbi {jobId} {spoolFile}')
     output = subprocess.run(command, capture_output=True, text=True)
+    if output.returncode > 0:
+        raise ValueError("Return Code not valid", output)
     return output.stdout
 
 """Creates a directory and a file with the current timestamp.
@@ -77,4 +84,7 @@ def writeToFile(dir, content):
     filename = datetime.datetime.now().isoformat().replace(":","-")
     filepath = Path(dir + "/" + filename)
     filepath.parent.mkdir(exist_ok=True, parents=True)
-    filepath.write_text(content)
+    try:
+        filepath.write_text(content)
+    except:
+        raise
