@@ -73,7 +73,8 @@ Let's take our first run at getting data from Endevor.  Let's use the terminal. 
 `zowe endevor list packages`
 
 This command give a tabluar view of output:
-
+----
+```
 Running on host: HOST:7080 instance: NDVRWEBS
 pkgId            description                                   status     updtDate                    updtUsrid
 ARADEMO          DEMO FOR ARA                                  APPROVED   2025-01-14T13:16:25.20+0000 MCQTH01  
@@ -87,7 +88,8 @@ BATTIVA0         std package                                   COMMITTED  2024-0
 BATTIVA1         battiva1                                      EXECUTED   2024-01-11T16:38:54.18+0000 FERTI99  
 BK001            Demo Package                                  INEDIT     2021-09-21T16:35:56.16+0000 CUST001  
 BRBD4TPACKAGT001 Deployed to DEP4TEST by BERBE02 @ 9 Sep 2019  EXECFAILED 2019-09-09T12:55:01.69+0000 BERBE02
-
+```
+----
 A table like this might be great for viewing information but it does have limits.  If we want to import it into Excel, we have to identify columns.  And that's usually interactive.  That's not good for automation.  And what if we change the columns?  That automation might break.  And the more columns, the longer the output.  
 
 Try running the previous command with `--full-output` and see how much information is returned.
@@ -165,9 +167,13 @@ Take a look at the Workshop.py file.  You'll notice import statements at the top
 
 ### Libraries
 `from zowesupport import *` imports our library.
+
 `import json` imports a library to work with JSON data.
+
 `import pandas` imports the pandas library.
+
 `import argparse` imports an argument parser for various options.
+
 
 A quick message about libraries.  There are a ton of libraries for performing a multitude of operations.  If you visit [PYPI](https://pypi.org) you can find a lot of libraries online.  You can write webservers (Streamlit, Django, Flask), work with data (Pandas, Numpy) and even read and write Excel files (openpyxl).
 
@@ -234,7 +240,7 @@ Let's make the script more flexible.  We want the user to select any available o
 
 Using the ArgParse library will allow us to do that.
 
-[ArgParse](https://docs.python.org/3/library/argparse.html) is another library.  This one works with command line arguments. Instead of managing them manually, we can use a library and set up some simple rules.  
+[ArgParse](https://docs.python.org/3/library/argparse.html) is library that works with command line arguments. Instead of managing them manually, we can use a library and set up some simple rules.  
 
 There's a section of code (lines 13-19).  It is commented out (# in first column).  Remove the comments.  You can highlight the commands and press CTRL-/ (windows) or Command-/ (mac) and it will remove the comment block for you.
 
@@ -244,7 +250,7 @@ This creates a parser object called parser.  We can add arguments, determine val
 
 You will find a section of add_arguments commands.  These add arguments to the command, as well as help and various options. 
 
-You'll notice that we have options for object, output directory, max return code, type and filename.
+We also have options for object, output directory, max return code, type and filename.
     Object is the item we want to query.  Let's require that.
     Directory is where the output of our commands will be stored.  We may or may not want this, however, it's useful for debugging if needed.
     Max Return Code could be used if we have a range of acceptable return codes.  Typically, it will be used when executing jobs.
@@ -257,11 +263,11 @@ You'll notice that we have options for object, output directory, max return code
 
 Now that we have some flexible data entry, we need to adjust the commands to work with it.
 
-The first place to change is out command string.  It's currently hard coded, so let's make it more flexible.
+The first place to change is the command string.  It's currently hard coded, so let's make it more flexible.
 
 Let's change the code so it can take the object passed in via the command line so we don't have to hardcode the value.
 
-Find your `command = "zowe ..."` string and change it to:
+Find the `command = "zowe ..."` string and change it to:
 
 `command = f"zowe endevor list {args.object} --rft string --sm"`
 
@@ -270,11 +276,11 @@ Place an "f" in front of a string turns it to an "F-Mode string".  This allows u
 
 F-Mode strings simplify this.  Using a Python editor, it will even highlight the variable different in the string.
 
-Now, let's adjust the `data = simpleCommand(command, "command")` so that we can pass a user selectable directory. To to that change the code to:
+Now, let's adjust the `data = simpleCommand(command, "command")` so that we can pass a user selectable directory. To do that change the code to:
 
 `data = simpleCommand(command, args.directory)`
 
-Now, let's adjust the code so it will write the appropriate file type out, based upon the --type flag.  This new block of code tests the args.type variable to see if it is Excel or CSV and writes the appropriate file extension.
+Now, let's adjust the code so it will write the appropriate file type out, based upon the `--type` flag.  This new block of code tests the args.type variable to see if it is Excel or CSV and writes the appropriate file extension.
 
 Replace the current pandas.DataFrame(data) line with the following code block:
 
@@ -326,14 +332,14 @@ workshop.py: error: argument -o/--object: invalid choice: 'pacages' (choose from
 
 We've now made the application more rubust.
 
-Note, argparse also create a help system.  You can run 
+Note, argparse creates a help system.  You can run:
 
 `python workshop.py -h`
 
 And it will provide a full description of the application and options, all from the ArgParse library.
 
 ### Let's make it easier to execute.
-Python is a scripting language.  If you've ever used BATCH on DOS/Windows, you know you can execute it directly.  On Linux/USS, you can do the same with other scripting languages, but it takes two steps to do it.  
+Python is a scripting language.  If you've ever used BATCH on DOS/Windows, you know you can execute it directly.  On Linux/USS, you can do the same with other scripting languages, but it takes two steps to do it.  The environment we are using now is a Linux environment.
 
 **First Part**
 
