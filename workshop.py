@@ -10,21 +10,15 @@ choices = ["codepages", "defaults", "dialog", "elements", "environments",
            "processcor-symbols", "psym", "stages", "subsystems", "symbols",
            "tasks", "type-sequence", "types"]
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-o", "--object", help="Object to list", required=True, choices=choices, dest='object')
-parser.add_argument("-d","--directory", help="Output directory", default="commands")
-parser.add_argument("-m", "--maxrc", help="Max return code for jobs", default=0, type=int)
-parser.add_argument("-t", "--type", choices=["excel", "csv"], help="Excel or CSV", default="excel")
-parser.add_argument("-f", "--filename", help="Output of filename", default="out", dest="filename")
-args = parser.parse_args()
+# parser = argparse.ArgumentParser()
+# parser.add_argument("-o", "--object", help="Object to list", required=True, dest='object')
+# parser.add_argument("-d","--directory", help="Output directory", default="commands")
+# parser.add_argument("-m", "--maxrc", help="Max return code for jobs", default=0, type=int)
+# parser.add_argument("-t", "--type", choices=["excel", "csv"], help="Excel or CSV", default="excel")
+# parser.add_argument("-f", "--filename", help="Output of filename", default="out", dest="filename")
+# args = parser.parse_args()
 
 # Execution
-command = f"zowe endevor list {args.object} --fo --rft string --sm"
-data = simpleCommand(command, args.directory)
-data = json.loads(data, strict=False)
-if args.type == "excel":
-    pandas.DataFrame(data).to_excel(f"{args.filename}.xlsx")
-elif args.type == "csv":
-    pandas.DataFrame(data).to_csv(f"{args.filename}.csv")
-else:
-    print("error, unknown value")
+command = "zowe endevor list packages --rft string --sm"
+data = simpleCommand(command, "output")
+print(data)
