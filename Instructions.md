@@ -234,7 +234,7 @@ pd.to_excel("packages.xlsx")
 
 But this creates another variable for one call.  Better to have cleaner code (both visually and programmatically) and just not have another variable and line.
 
-Once you make this change, save and execute the python program:
+Once you make this change, save and execute the python program from the terminal:
 
 `python workshop.py`
 
@@ -299,7 +299,7 @@ Now, let's adjust the `data = simpleCommand(command, "command")` so that we can 
 
 Now, let's adjust the code so it will write the appropriate file type out, based upon the `--type` flag.  This new block of code tests the args.type variable to see if it is Excel or CSV and writes the appropriate file extension.
 
-Replace the current pandas.DataFrame(data) line with the following code block:
+Replace the current `pandas.DataFrame(data)` line with the following code block:
 
 ```
 if args.type == "excel":
@@ -313,6 +313,8 @@ else:
 You should be able to run the following command to create an Excel spreadsheet with the data.
 
 `python workshop.py -o packages`
+
+**NOTE:** Pandas doesn't overwrite the file.  Keeping things simple, we aren't checking to see if the file exists.  If your data isn't updating, change the filename (-f) or delete the existing file.
 
 Why didn't we have to specify Excel or CSV?  We set the default as Excel on the parse command for type.
 
@@ -405,8 +407,7 @@ You will see the basic help show up on the screen.
 ### Seeing the results
 If you've run this to create an Excel file, we need to view it.  If you have Excel on your local system, use the file explorer to right click on the file and select download.  You can download and use the file with Excel.
 
-TODO:  Update this section, as the viewer may be installed already
-If you don't have Excel, you can use a viewer in VS Code.  Go to the extensions, search for Excel.  Install the Excel Viewer by GrapeCity.  You may get a licensing message, but it will show the file in a spreadsheet mode.
+If you don't have Excel, you can use a viewer in VS Code.  If the viewer is installed, it will show a cell based view.  Otherwise go to the extensions, search for Excel.  Install the Excel Viewer by GrapeCity.  You may get a licensing message, but it will show the file in a spreadsheet mode.
 
 ----
 
