@@ -2,13 +2,13 @@
 During this exercise, you will work with Python to automate a number of actions using [Zowe CLI](https://zowe.org).
 
 # Getting Started
-Zowe CLI is a command line interface.  It is often used for automation, much like a Rexx would be used on the mainframe.
+Zowe CLI is a command line interface.  It is often used for automation through scripts using a laguange such as Rexx.
 
 Rexx is very powerful.  And so is Python.  Rexx can automate many actions on the mainframe but has also been ported to other platforms.  Python can be used to automate things on the mainframe and distributed environments.
 
 A big advantage of Python over Rexx is library support.  In Rexx, you can find scripts to perform many actions, however, interacting with off host applications might require a lot more work.  
 
-Using libraries in Python, we can integrate with a variety of systems and applications with little code.
+Using libraries in Python, we can integrate with a variety of systems and applications with little code.  This includes desktop tools, like Excel, databases and online solutions, like ServiceNow and Amazon Web Services.
 
 ## What is Python
 Python is a versatile and powerful scripting language known for its simplicity and readability. Here's a summary of the key aspects:
@@ -90,6 +90,7 @@ BK001            Demo Package                                  INEDIT     2021-0
 BRBD4TPACKAGT001 Deployed to DEP4TEST by BERBE02 @ 9 Sep 2019  EXECFAILED 2019-09-09T12:55:01.69+0000 BERBE02
 ```
 ----
+
 A table like this might be great for viewing information but it does have limits.  If we want to import it into Excel, we have to identify columns.  And that's usually interactive.  That's not good for automation.  And what if we change the columns?  That automation might break.  And the more columns, the longer the output.  
 
 Try running the previous command with `--full-output` and see how much information is returned.
@@ -122,7 +123,7 @@ Run the commands to see the outputs and compare them:
 `zowe endevor list packages --rft string`
 
 Out of the all options, it looks like `--rft string` is the closest to capturing column and row information.  However, if you run this, you'll notice messages at the top of the output.  Let's remove those using the suppress messages flag, `--sm`.
-]\
+
 Run:
 
 `zowe endevor list packages --rft string --sm`
@@ -157,6 +158,12 @@ The first line imports the zowesupport library. This library wraps functions for
 `data = simpleCommand...` runs the command, writes the command output to the out folder, the takes the output from the command and assigns it to a variable named `data`.
 
 `print(data)` does exactly that, it prints the data on the command line. 
+
+----
+To run the application, from the terminal session type:
+
+`python first.py`
+----
 
 If you did this correctly, you should get the same output as running the zowe command directly.
 
@@ -231,7 +238,7 @@ Once you make this change, save and execute the python program:
 
 `python workshop.py`
 
-It should not really display any information, however, it will write out a file called "packages.xlsx" in your current directory.
+It does not display any information, however, it will write a file called "packages.xlsx" in your current directory.
 
 The file should be seen in the File Explorer or you can list is using the `ls -l` command in the terminal window.
 
@@ -242,24 +249,33 @@ Using the ArgParse library will allow us to do that.
 
 [ArgParse](https://docs.python.org/3/library/argparse.html) is library that works with command line arguments. Instead of managing them manually, we can use a library and set up some simple rules.  
 
-There's a section of code (lines 13-19).  It is commented out (# in first column).  Remove the comments.  You can highlight the commands and press CTRL-/ (windows) or Command-/ (mac) and it will remove the comment block for you.
+There's a section of code (lines 13-19) commented out (as identified with the # in the first colulmn).  Remove the comments.  You can highlight the lines and press CTRL-/ (windows) or Command-/ (mac) and it will remove the comment block for you.
 
+----
+### Description of code
 `parser = argparse.ArgumentParser()`
 
-This creates a parser object called parser.  We can add arguments, determine values for them, make the required, etc.  
+This creates a parser object called parser.  We can add arguments, determine valid values for them, make the required, etc.  
 
 You will find a section of add_arguments commands.  These add arguments to the command, as well as help and various options. 
 
-We also have options for object, output directory, max return code, type and filename.
+We also have options for output object, output directory, max return code, type and filename.
+    
     Object is the item we want to query.  Let's require that.
+
     Directory is where the output of our commands will be stored.  We may or may not want this, however, it's useful for debugging if needed.
+    
     Max Return Code could be used if we have a range of acceptable return codes.  Typically, it will be used when executing jobs.
+    
     Type is used to determine if the output will be CSV or Excel
+    
     Filename is used to set the filename for the CSV/Excel file.
 
     Review the other arguments for each *.add_argument()* command.  You'll see you can make them required or optional, display help and even assign the value to a variable.
 
 `parse_args()` will parse the arguements during the command line execution, making them available.
+
+----
 
 Now that we have some flexible data entry, we need to adjust the commands to work with it.
 
@@ -271,7 +287,8 @@ Find the `command = "zowe ..."` string and change it to:
 
 `command = f"zowe endevor list {args.object} --rft string --sm"`
 
-Place an "f" in front of a string turns it to an "F-Mode string".  This allows us to interpolate variables into the string.  It will substitue the string values, making it easier to read.  If we didn't use them, the string would look more complicated, like a Rexx string.  It would look like:
+Placing an "f" in front of a string turns it to an "F-Mode string".  This allows us to interpolate variables into the string.  It will substitue the string values, making it easier to read.  If we didn't use them, the string would look more complicated, like a Rexx string.  It would look like:
+
 `command = "zowe endevor list " + args.object + " --rft string --sm"`
 
 F-Mode strings simplify this.  Using a Python editor, it will even highlight the variable different in the string.
@@ -305,7 +322,7 @@ However, we aren't done yet.  If you have a typo for the object name, the comman
 
 Let's make this a little more user friendly.  If the user has a typo, let's correct them before we even execute the command.
 
-You'll notice there's a line `choices = ["codepages", "defaults"...]`.  This is called a Python dictionary.  ArgParser can validate the values for arguments using dictionaries.  Rather than put them inline, making the code harder to read, we created a dictionary called choices with a list of valid choices.  
+You'll notice there's a line `choices = ["codepages", "defaults"...]`.  This is a Python dictionary.  ArgParser can validate the values for arguments using dictionaries.  Rather than put them inline, making the code harder to read, we created a dictionary called choices with a list of valid choices.  
 
 If you look at the type arguement line, you will see it listed there:
 `parser.add_argument("-t", "--type", choices=["excel", "csv"], help="Excel or CSV", default="excel")`
@@ -323,6 +340,7 @@ Save the file and run it again.  If you run
 `python workshop.py -o pacages`
 
 You will get better output:
+
 ```
 usage: workshop.py [-h]
                    -o {codepages,defaults,dialog,elements,environments,features,instances,packages,processor-groups,pgrp,processcor-symbols,psym,stages,subsystems,symbols,tasks,type-sequence,types}
@@ -332,14 +350,14 @@ workshop.py: error: argument -o/--object: invalid choice: 'pacages' (choose from
 
 We've now made the application more rubust.
 
-Note, argparse creates a help system.  You can run:
+Note, argparse creates a help system.  You can run the following command to see it:
 
 `python workshop.py -h`
 
 And it will provide a full description of the application and options, all from the ArgParse library.
 
 ### Let's make it easier to execute.
-Python is a scripting language.  If you've ever used BATCH on DOS/Windows, you know you can execute it directly.  On Linux/USS, you can do the same with other scripting languages, but it takes two steps to do it.  The environment we are using now is a Linux environment.
+Python is a scripting language.  If you've ever used BATCH on DOS/Windows, you know you can execute BATCH commands directly.  The environment we are using is a Linux environment.  On Linux/USS, you can do the same with other scripting languages, but it takes two steps to do it.
 
 **First Part**
 
@@ -357,7 +375,7 @@ Run:
 
 It should show `/usr/bin/python`.  This is the location of Python for this machine.
 
-We are going to add the shebang to the top of the file, like this:
+We are going to add the shebang and interpreter to the top of the file, like this:
 
 `#!/usr/bin/python`
 
@@ -367,7 +385,7 @@ We've now told our operating system what to do, but if we run it, it will still 
 
 **Second Part**
 
-The script, as created has Read/Write privileges for the current user, and read for everyone else.  We need to set the execution bit.  We can do that using the `chmod` command.  
+The script, as created has Read/Write privileges for the current user, and read for everyone else.  We need to set the execution bit.  We can do that using the `chmod` command in the terminal. 
 
 To set the execution bit, we run:
 
@@ -387,6 +405,7 @@ You will see the basic help show up on the screen.
 ### Seeing the results
 If you've run this to create an Excel file, we need to view it.  If you have Excel on your local system, use the file explorer to right click on the file and select download.  You can download and use the file with Excel.
 
+TODO:  Update this section, as the viewer may be installed already
 If you don't have Excel, you can use a viewer in VS Code.  Go to the extensions, search for Excel.  Install the Excel Viewer by GrapeCity.  You may get a licensing message, but it will show the file in a spreadsheet mode.
 
 ----
@@ -517,6 +536,8 @@ print(f"Wrote PDF to {filename}")
 ```
 
 We took 22 lines of code to run a job, download the output and then save it to a PDF.
+
+------
 
 # Conclusion
 
