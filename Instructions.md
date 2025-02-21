@@ -61,6 +61,7 @@ There can be a ton of ways to look at information.  On and off the mainframe, th
 
 These aren't the only formats available.  If we wanted use to time series values, we might export the data to a database so it could be manipulated in different ways.
 
+
 ## Using Endevor REST API
 Endevor offers multiple ways to get data out of it.  JCL and CSVs are common ways to get data out.  Endevor also offers a [REST based API](https://aws.amazon.com/what-is/restful-api/).
 
@@ -70,30 +71,33 @@ The Zowe CLI does have some limitations.  It wasn't designed to export Excel doc
 
 Let's take our first run at getting data from Endevor.  Let's use the terminal.  It can be accessed using the hamburger menu (three horizontal lines), Terminal, New Terminal:
 
+![Login](./images/terminal.gif)
+
 `zowe endevor list packages`
 
 This command give a tabluar view of output:
 ----
 ```
-Running on host: HOST:7080 instance: NDVRWEBS
-pkgId            description                                   status     updtDate                    updtUsrid
-ARADEMO          DEMO FOR ARA                                  APPROVED   2025-01-14T13:16:25.20+0000 MCQTH01  
-AS               Created from SNOW                             APPROVED   2025-01-14T13:41:22.77+0000 MCQTH01  
-BANK DEMO        Bank Demo                                     INEDIT     2024-11-12T08:37:29.11+0000 JAGBR01  
-BANK DEMO 2      demo                                          INEDIT     2024-11-12T10:13:31.40+0000 JAGBR01  
-BANK DEMO 3      BANK DEMO                                     INEDIT     2024-11-12T13:00:10.93+0000 JAGBR01  
-BATTIVA          promotion pkg                                 EXECUTED   2024-01-11T13:18:49.70+0000 FERTI99  
-BATTIVATPKG      teste                                         INEDIT     2024-01-15T10:54:51.94+0000 FERTI99  
-BATTIVA0         std package                                   COMMITTED  2024-01-11T16:02:13.72+0000 FERTI99  
-BATTIVA1         battiva1                                      EXECUTED   2024-01-11T16:38:54.18+0000 FERTI99  
-BK001            Demo Package                                  INEDIT     2021-09-21T16:35:56.16+0000 CUST001  
-BRBD4TPACKAGT001 Deployed to DEP4TEST by BERBE02 @ 9 Sep 2019  EXECFAILED 2019-09-09T12:55:01.69+0000 BERBE02
+[INFO] Running on host: 10.1.2.73:6002 instance: ENDEVOR
+[WARN] basePath 'EndevorService/rest' points to version 1 of the Endevor REST API, command executed in v1 compatibility mode. Some functionality may not be available.
+pkgId           description                             status   updtDate                    updtUsrid
+CUST002         Package for Vitality Class              INEDIT   2024-11-07T15:25:09.09+0000 CUST002  
+CUST003         package for vitality class              INEDIT   2024-11-07T15:25:10.36+0000 CUST003  
+CUST008         Package for Vitality Class              INEDIT   2024-11-07T15:26:34.28+0000 CUST008  
+CUST042#PACK    move some element                       APPROVED 2024-04-13T06:23:13.98+0000 CUST042  
+MARBLESBERBE02  build promo package for marbles berbe02 APPROVED 2018-12-04T13:16:07.60+0000 BERBE02  
+PROMOTEMARBLES  promote marbles elements                INEDIT   2018-12-06T12:59:03.73+0000 BERBE02  
+PROMOTEMARBLE01 PROMOTE MARBLE01 TO PRD                 INEDIT   2018-12-06T13:18:51.64+0000 BERBE02  
+VIT             Test as part of Vitality                INEDIT   2024-11-13T07:18:37.52+0000 CUST004  
+VIT1            Toms Test                               INEDIT   2024-11-07T15:40:21.14+0000 CUST001  
 ```
 ----
 
 A table like this might be great for viewing information but it does have limits.  If we want to import it into Excel, we have to identify columns.  And that's usually interactive.  That's not good for automation.  And what if we change the columns?  That automation might break.  And the more columns, the longer the output.  
 
 Try running the previous command with `--full-output` and see how much information is returned.
+
+**TIP**: You can use your up arrow key to get the last command, and add the --full-output (or --fo) to the end of the line.
 
 Is there a way to export into CSV format from Zowe CLI's Endevor Plugin?
 
@@ -139,6 +143,8 @@ Our first goal is to execute the command then make it flexible.
 
 Create a new file, call it `first.py`.  You can create the file through the file option or using the terminal and typing `code first.py`.
 
+![CreateFirst](./images/run_first.gif)
+
 Copy this text into file:
 
 ```
@@ -163,6 +169,7 @@ The first line imports the zowesupport library. This library wraps functions for
 To run the application, from the terminal session type:
 
 `python first.py`
+
 ----
 
 If you did this correctly, you should get the same output as running the zowe command directly.
@@ -234,13 +241,16 @@ pd.to_excel("packages.xlsx")
 
 But this creates another variable for one call.  Better to have cleaner code (both visually and programmatically) and just not have another variable and line.
 
-Once you make this change, save and execute the python program from the terminal:
+Once you make this change, save and execute the python program:
 
 `python workshop.py`
 
 It does not display any information, however, it will write a file called "packages.xlsx" in your current directory.
 
 The file should be seen in the File Explorer or you can list is using the `ls -l` command in the terminal window.
+
+
+![RunWorkshop](./images/run_workskop1.gif)
 
 ### Flexibility is good
 Let's make the script more flexible.  We want the user to select any available object for listing, including elements, systems, subsystems, etc.  And what if they need it in CSV instead of Excel?  Let's also allow the user to specify the name of the file.
@@ -299,7 +309,7 @@ Now, let's adjust the `data = simpleCommand(command, "command")` so that we can 
 
 Now, let's adjust the code so it will write the appropriate file type out, based upon the `--type` flag.  This new block of code tests the args.type variable to see if it is Excel or CSV and writes the appropriate file extension.
 
-Replace the current `pandas.DataFrame(data)` line with the following code block:
+Replace the current pandas.DataFrame(data) line with the following code block:
 
 ```
 if args.type == "excel":
@@ -313,8 +323,6 @@ else:
 You should be able to run the following command to create an Excel spreadsheet with the data.
 
 `python workshop.py -o packages`
-
-**NOTE:** Pandas doesn't overwrite the file.  Keeping things simple, we aren't checking to see if the file exists.  If your data isn't updating, change the filename (-f) or delete the existing file.
 
 Why didn't we have to specify Excel or CSV?  We set the default as Excel on the parse command for type.
 
@@ -337,7 +345,7 @@ to
 
 `parser.add_argument("-o", "--object", help="Object to list", choices=choices, required=True, dest='object')`
 
-Save the file and run it again.  If you run
+Save the file and run it again.  If you run:
 
 `python workshop.py -o pacages`
 
@@ -404,10 +412,10 @@ To execute our application now, we can simply type:
 
 You will see the basic help show up on the screen.
 
+![chmod](./images/run_workshop2.gif)
+
 ### Seeing the results
 If you've run this to create an Excel file, we need to view it.  If you have Excel on your local system, use the file explorer to right click on the file and select download.  You can download and use the file with Excel.
-
-If you don't have Excel, you can use a viewer in VS Code.  If the viewer is installed, it will show a cell based view.  Otherwise go to the extensions, search for Excel.  Install the Excel Viewer by GrapeCity.  You may get a licensing message, but it will show the file in a spreadsheet mode.
 
 ----
 
@@ -445,6 +453,8 @@ Doing something similar to the previous exercise, we will run a job and save the
 We are going to use the [FPDF](https://pypi.org/project/fpdf/) library to create a PDF.  To use the FPDF library we need to install it.  The library was installed in the previous examples, but this time we will have to install the library ourselves.  To install the libary, we will use the Python package manager, pip. In the terminal, run this command:
 
 `pip install fpdf`
+
+![Install](./images/install_fpdf.gif)
 
 It is now available for use in the python code. 
 
@@ -537,6 +547,8 @@ print(f"Wrote PDF to {filename}")
 ```
 
 We took 22 lines of code to run a job, download the output and then save it to a PDF.
+
+![Workshop2](./images/run_workshop_pdf.gif)
 
 ------
 
