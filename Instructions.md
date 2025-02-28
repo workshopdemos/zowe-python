@@ -399,7 +399,7 @@ The script, as created has Read/Write privileges for the current user, and read 
 
 To set the execution bit, we run:
 
-`chmod +x workshop.sh`
+`chmod +x workshop.py`
 
 **Executing the program**
 Linux/USS do not have the current directory in the execution path.  This is a security measure.  In order to execute an application in the current directory, we must explicitly call that file using the path.
